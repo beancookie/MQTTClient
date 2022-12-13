@@ -12,16 +12,23 @@ void setup()
   initMQTT();
 }
 
+struct GPS
+{
+  float lat;
+  float lon;
+  MSGPACK_DEFINE(lat, lon);
+};
+
 void sendGPSMessage()
 {
-  MsgPack::map_t<String, float> m{{"one", 1.1}, {"two", 2.2}, {"three", 3.3}};
+
+  GPS gps = GPS{lat : float(random(3114, 3178) / 100.0), lon : float(random(11822, 11897) / 100.0)};
 
   MsgPack::Packer packer;
-  packer.serialize(m);
-  Serial.print("Publish GPS: ");
-  Serial.println((char *)packer.data());
+  packer.serialize(gps);
+  Serial.printf("Publish GPS: { lat: %f, lon: %f }\n", gps.lat, gps.lon);
 
-  publishMQTT("event/gktjk1545/up", 1, true, (char *)packer.data());
+  publishMQTT("event/gps/gktjk1545/up", 1, true, (char *)packer.data());
 }
 
 void loop()
