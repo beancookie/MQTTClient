@@ -3,10 +3,10 @@
 
 #include "MQTT.h"
 
-const char *MQTTUsername = "***";
-const char *MQTTPassword = "***";
+const char *MQTTUsername = "admin";
+const char *MQTTPassword = "public";
 
-const char *MQTTHost = "***";
+const char *MQTTHost = "175.27.192.58";
 const int MQTTPort = 1883;
 
 AsyncMqttClient mqttClient;
@@ -16,10 +16,12 @@ void initMQTT()
   mqttClient.setServer(MQTTHost, MQTTPort);
   mqttClient.setCredentials(MQTTUsername, MQTTPassword);
   Serial.print("Connecting to MQTT.");
+  mqttClient.connect();
   while (!MQTTConnected())
   {
     Serial.print('.');
     delay(1000);
+    mqttClient.connect();
   }
   Serial.println("Connected");
 }

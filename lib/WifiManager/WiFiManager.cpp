@@ -2,8 +2,8 @@
 
 #include "WiFiManager.h"
 
-const char *ssid = "***";
-const char *password = "***";
+const char *ssid = "ZPP";
+const char *password = "18705170885";
 
 void initWiFi()
 {

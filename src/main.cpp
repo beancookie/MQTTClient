@@ -18,13 +18,18 @@ void sendGPSMessage()
 
   MsgPack::Packer packer;
   packer.serialize(m);
-  Serial.println("Publish GPS\n");
+  Serial.print("Publish GPS: ");
+  Serial.println((char *)packer.data());
 
-  publishMQTT("mqtt/gktjk1545", 1, true, (char *)packer.data());
+  publishMQTT("event/gktjk1545/up", 1, true, (char *)packer.data());
 }
 
 void loop()
 {
+  if (!MQTTConnected())
+  {
+    MQTTReconnect();
+  }
   sendGPSMessage();
   delay(3000);
 }
