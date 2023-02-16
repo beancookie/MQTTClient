@@ -26,6 +26,14 @@ void initMQTT()
   Serial.println("Connected");
 }
 
+void subscribe(const char* topic, uint8_t qos) {
+  mqttClient.subscribe(topic, qos);
+}
+
+void onMessage(AsyncMqttClientInternals::OnMessageUserCallback callback) {
+  mqttClient.onMessage(callback);
+}
+
 void MQTTReconnect()
 {
   mqttClient.connect();

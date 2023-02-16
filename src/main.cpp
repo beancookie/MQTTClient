@@ -1,16 +1,13 @@
 #include <Arduino.h>
 #include <MsgPack.h>
+#include <AsyncMqttClient.hpp>
 
+#include "sdkconfig.h"
 #include "WiFiManager.h"
 #include "MQTT.h"
 
-void setup()
-{
-  Serial.begin(115200);
-
-  initWiFi();
-  initMQTT();
-}
+#define LED_BUILTIN1 (12)
+#define LED_BUILTIN2 (13)                 
 
 struct GPS
 {
@@ -18,6 +15,24 @@ struct GPS
   float lon;
   MSGPACK_DEFINE(lat, lon);
 };
+
+int rate;
+
+void onMessageCallback(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
+  Serial.printf("onMqttMessage %s \n", payload);
+  rate = atoi(payload);
+}
+
+void setup()
+{
+  Serial.begin(115200);
+
+  initWiFi();
+  initMQTT();
+  subscribe("event/gps/gktjk1545/down", 2);
+  onMessage(onMessageCallback);
+  rate = 5;
+}
 
 void sendGPSMessage()
 {
@@ -38,5 +53,5 @@ void loop()
     MQTTReconnect();
   }
   sendGPSMessage();
-  delay(3000);
+  delay(rate * 1000);
 }
