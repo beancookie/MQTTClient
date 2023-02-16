@@ -6,8 +6,10 @@
 #include "WiFiManager.h"
 #include "MQTT.h"
 
-#define LED_BUILTIN1 (12)
-#define LED_BUILTIN2 (13)                 
+#define DEFAULT_RATE 5         
+#define QOS_0 0         
+#define QOS_1 1         
+#define QOS_2 2         
 
 struct GPS
 {
@@ -29,9 +31,9 @@ void setup()
 
   initWiFi();
   initMQTT();
-  subscribe("event/gps/gktjk1545/down", 2);
+  subscribe("event/gps/gktjk1545/down", QOS_2);
   onMessage(onMessageCallback);
-  rate = 5;
+  rate = DEFAULT_RATE;
 }
 
 void sendGPSMessage()
@@ -43,7 +45,7 @@ void sendGPSMessage()
   packer.serialize(gps);
   Serial.printf("Publish GPS: { lat: %f, lon: %f }\n", gps.lat, gps.lon);
 
-  publishMQTT("event/gps/gktjk1545/up", 1, true, (char *)packer.data());
+  publishMQTT("event/gps/gktjk1545/up", QOS_1, true, (char *)packer.data());
 }
 
 void loop()
